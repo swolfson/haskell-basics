@@ -27,6 +27,27 @@ capitalizeWords s = map (\w -> (w, capitalize w)) (words s)
     capitalize [] = []
     capitalize (c:cs) = toUpper c : cs
 
+capitalizeWord :: String -> String
+capitalizeWord [] = []
+capitalizeWord (' ':cs) = ' ':(capitalizeWord cs)
+capitalizeWord (c:cs) = toUpper c : cs
 
+capitalizeParagraph :: String -> String
+capitalizeParagraph para = 
+  let sentences = splitOn '.' para
+      capSentences = map capitalizeWord sentences
+  in intercalate "." capSentences
+  where
+    splitOn :: Char -> String -> [String]
+    splitOn _ [] = []
+    splitOn c str =
+      case break ( == c) str of
+        (part, []) -> [part]
+        (part, _:rest) -> part : splitOn c rest
+
+    intercalate :: String -> [String] -> String
+    intercalate _ [] = ""
+    intercalate _ [x] = x
+    intercalate sep (x:xs) = x ++ sep ++ intercalate sep xs
 
 
