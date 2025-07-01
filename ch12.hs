@@ -30,4 +30,41 @@ mkPerson' (Left badName) (Left badAge)   = Left (badName ++ badAge)
 mkPerson' (Left badName) _   = Left badName 
 mkPerson' _ (Left badAge)    = Left badAge 
 
+notThe :: String -> Maybe String
+notThe "the" = Nothing
+notThe cs = Just cs
+
+replaceThe :: String -> String
+replaceThe ""   = ""
+replaceThe strs = unwords $ aToThe $ words strs
+  where
+    aToThe :: [String] -> [String]
+    aToThe (w:[]) = case notThe w of
+      Nothing -> ["a"]
+      Just w -> [w]
+    aToThe (w:ws) = case notThe w of
+      Nothing -> ["a"] ++ aToThe ws
+      Just w  -> w : aToThe ws
+
+countTheBeforeVowel :: String -> Integer
+countTheBeforeVowel "" = 0
+countTheBeforeVowel text = countPairs (words text)
+  where
+    countPairs [] = 0
+    countPairs [_] = 0
+    countPairs (w1:w2:ws) = 
+      if w1 == "the" && startsWithVowel w2
+      then  1 + countPairs (w2:ws)
+      else countPairs (w2:ws)
+    startsWithVowel [] = False
+    startsWithVowel (c:_) = c `elem` "aeiouAEIOU"
+
+countVowels :: String -> Int
+countVowels "" = 0
+countVowels cs =  length (strVwls cs)
+  where
+    strVwls [] = ""
+    strVwls (c:cs) = case (c `elem` "aeiouAEIOU") of
+      True -> c : (strVwls cs)
+      False -> strVwls cs
 
