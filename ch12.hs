@@ -68,3 +68,67 @@ countVowels cs =  length (strVwls cs)
       True -> c : (strVwls cs)
       False -> strVwls cs
 
+newtype Word' =
+  Word' String
+  deriving (Eq, Show)
+
+
+vowels = "aeiou"
+
+mkWord :: String -> Maybe Word'
+mkWord str = case numVow > numCons of
+  True -> Nothing
+  False -> Just $ Word' str
+  where
+    numVow = countVowels str
+    numCons = (length str) - numVow
+
+data Nat = 
+    Zero
+  | Succ Nat
+  deriving (Eq, Show)
+
+natToInteger :: Nat -> Integer
+natToInteger Zero = 0
+natToInteger (Succ n) = 1 + natToInteger n
+
+integerToNat :: Integer ->  Maybe Nat
+integerToNat n 
+  | n < 0  = Nothing
+  | n == 0 = Just Zero
+  | n > 0  = Just (go n)
+  where 
+    go 0 = Zero
+    go n = Succ (go (n-1))
+
+isJust :: Maybe a -> Bool
+isJust Nothing = False
+isJust (Just _)  = True
+
+isNothing :: Maybe a -> Bool
+isNothing Nothing = True
+isNothing (Just _)  = False
+
+mayybee :: b -> (a->b) -> Maybe a -> b
+mayybee x _ Nothing = x
+mayybee x f (Just y) = f y 
+
+fromMaybe :: a -> Maybe a -> a
+fromMaybe x y = mayybee x id y
+
+listToMaybe :: [a] -> Maybe a
+listToMaybe [] = Nothing
+listToMaybe (x:xs) = Just x
+
+maybeToList :: Maybe a -> [a]
+maybeToList Nothing = []
+maybeToList (Just x) = [x]
+
+catMaybes :: [Maybe a] -> [a]
+catMaybes [] = []
+catMaybes (x:xs) = (maybeToList x) ++ (catMaybes xs)
+
+flipMaybe :: [Maybe a] -> Maybe [a]
+flipMaybe [] = []
+flipMaybe [Nothing:xs] = Nothing
+flipMaybe 
