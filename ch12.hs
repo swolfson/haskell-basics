@@ -129,6 +129,28 @@ catMaybes [] = []
 catMaybes (x:xs) = (maybeToList x) ++ (catMaybes xs)
 
 flipMaybe :: [Maybe a] -> Maybe [a]
-flipMaybe [] = []
-flipMaybe [Nothing:xs] = Nothing
-flipMaybe 
+flipMaybe [] = Just []
+flipMaybe (Nothing : _) = Nothing
+flipMaybe (Just x: xs) = case flipMaybe xs of
+  Nothing -> Nothing
+  Just ys -> Just (x:ys)
+
+lefts' :: [Either a b] -> [a]
+lefts' = foldr f []
+  where
+    f (Left x) acc = x : acc
+    f (Right _) acc = acc
+
+rights' :: [Either a b] -> [b]
+rights' = foldr f []
+  where
+    f (Right x) acc = x : acc
+    f (Left _) acc = acc
+
+partitionEithers' :: [Either a b] -> ([a],[b])
+partitionEithers' = foldr f ([],[])
+  where
+    f (Left x) (accL, accR)  = ( (x:accL), accR)
+    f (Right x) (accL, accR) = ( accL, (x:accR))
+
+
