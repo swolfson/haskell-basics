@@ -153,4 +153,29 @@ partitionEithers' = foldr f ([],[])
     f (Left x) (accL, accR)  = ( (x:accL), accR)
     f (Right x) (accL, accR) = ( accL, (x:accR))
 
+eitherMaybe' :: (b -> c) -> Either a b -> Maybe c
+eitherMaybe' f (Left x) = Nothing
+eitherMaybe' f (Right x) = Just (f x)
 
+either' :: (a -> c) -> (b -> c) -> Either a b -> c
+either' fa fb (Left x) = fa x
+either' fa fb (Right x) = fb x
+
+eitherMaybe'' :: (b->c) -> Either a b -> Maybe c
+eitherMaybe'' fb ex = either' fa fb' ex
+  where
+    fa = \_ -> Nothing
+    fb' = Just . fb
+
+myIterate :: (a->a) -> a -> [a]
+myIterate f x =  [x] ++ (myIterate f (f x))
+
+myUnfoldr :: (b -> Maybe (a,b)) -> b -> [a]
+myUnfoldr fb xb = xa' ++ (myUnfoldr fb xb')
+  where
+    xa' = case (fb xb) of
+      Just (xa'', _) -> [xa'']
+      Nothing -> []
+    xb' = case (fb xb) of
+      Just (_, xb'') -> xb''
+      Nothing        -> xb
